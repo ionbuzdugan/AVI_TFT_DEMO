@@ -24,16 +24,15 @@ const int PIN_SD_CS = 4;                        // pin of sd card
 const int __Gnbmp_height = 320;                 // bmp hight
 const int __Gnbmp_width  = 240;                 // bmp width
 
-unsigned char __Gnbmp_image_offset  = 0;        // offset
+unsigned char __Gnbmp_image_offset  = 45;        // offset
 
 
-int __Gnfile_num = 3;                           // num of file
-
-char __Gsbmp_files[3][FILENAME_LEN] =           // add file name here
+int num_photos = 3;                           // num of file
+char photos[3][FILENAME_LEN] =           // add file name here
 {
-"flower.BMP",
-"hibiscus.bmp",
-"test.bmp",
+"/BG_1.bmp",
+"/BG_2.bmp",
+"/BG_3.bmp",
 };
 
 
@@ -66,20 +65,26 @@ void setup()
 
 void loop()
 {
-  bmpFile = SD.open("/LOGO.bmp");
-  if (! bmpFile)
-  {
-      Serial.println("didnt find image");
-      while (1);
-  }
+    for(unsigned char i=0; i<num_photos; i++)
+    {
+        bmpFile = SD.open(photos[i]);
+//        if (! bmpFile)
+//        {
+//            Serial.println("didnt find image");
+//            while (1);
+//        }
+//
+//        if(! bmpReadHeader(bmpFile)) 
+//        {
+//            Serial.println("bad bmp");
+//            return;
+//        }
 
+        bmpdraw(bmpFile, 0, 0);
+        bmpFile.close();
 
-  bmpdraw(bmpFile, 0, 0);
-  bmpFile.close();
-
-while(1){
-  delay(10000);
-}
+        delay(5000);
+    }
 
 }
 
@@ -90,8 +95,8 @@ while(1){
 // more RAM but makes the drawing a little faster. 20 pixels' worth
 // is probably a good place
 
-#define BUFFPIXEL       1                      // must be a divisor of 240 
-#define BUFFPIXEL_X3    3                     // BUFFPIXELx3
+#define BUFFPIXEL       60                      // must be a divisor of 240 
+#define BUFFPIXEL_X3    180                     // BUFFPIXELx3
 
 void bmpdraw(File f, int x, int y)
 {
